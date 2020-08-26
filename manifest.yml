@@ -34,35 +34,38 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 
 ---
-apiVersion: batch/v1beta1
-kind: CronJob
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: proxy-inject
+  labels:
+    app: proxy-inject
 spec:
-  concurrencyPolicy: Forbid
-  startingDeadlineSeconds: 60
-  jobTemplate:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: proxy-inject
+  template:
+    metadata:
+      labels:
+        app: proxy-inject
     spec:
-      template:
-        spec:
-          containers:
-          - image: docker-registry.kube-system.svc:5000/vmware/proxy-inject:1.0.0
-            name: proxy-inject
-            env:
-              - name: HTTP_PROXY
-                value: "${TKC_HTTP_PROXY}"
-              - name: HTTPS_PROXY
-                value: "${TKC_HTTPS_PROXY}"
-              - name: NO_PROXY
-                value: "${TKC_NO_PROXY}"
-              - name: ALL_NAMESPACES
-                value: "${ALL_NAMESPACES}"
-            resources:
-              requests:
-                memory: "64Mi"
-                cpu: "250m"
-              limits:
-                memory: "256Mi"
-                cpu: "500m"
-          restartPolicy: Never
-  schedule: '*/1 * * * *'
+      containers:
+      - image: docker-registry.kube-system.svc:5000/vmware/proxy-inject:1.0.0
+        name: proxy-inject
+        env:
+          - name: HTTP_PROXY
+            value: "${TKC_HTTP_PROXY}"
+          - name: HTTPS_PROXY
+            value: "${TKC_HTTPS_PROXY}"
+          - name: NO_PROXY
+            value: "${TKC_NO_PROXY}"
+          - name: ALL_NAMESPACES
+            value: "${ALL_NAMESPACES}"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
