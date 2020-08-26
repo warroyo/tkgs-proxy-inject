@@ -4,3 +4,5 @@ export TKC_HTTPS_PROXY="http://someproxy:8080"
 export TKC_HTTP_PROXY="http://someproxy:8080"
 export TKC_NO_PROXY="localhost"
 export ALL_NAMESPACES="false"
+#Optional
+#export INTERVAL="30"
