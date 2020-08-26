@@ -62,8 +62,6 @@ spec:
             value: "${TKC_HTTPS_PROXY}"
           - name: TKC_NO_PROXY
             value: "${TKC_NO_PROXY}"
-          - name: ALL_NAMESPACES
-            value: "${ALL_NAMESPACES}"
         resources:
           requests:
             memory: "64Mi"
