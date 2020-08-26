@@ -50,15 +50,16 @@ spec:
       labels:
         app: proxy-inject
     spec:
+      serviceAccountName: internal-kubectl
       containers:
       - image: docker-registry.kube-system.svc:5000/vmware/proxy-inject:1.0.0
         name: proxy-inject
         env:
-          - name: HTTP_PROXY
+          - name: TKC_HTTP_PROXY
             value: "${TKC_HTTP_PROXY}"
-          - name: HTTPS_PROXY
+          - name: TKC_HTTPS_PROXY
             value: "${TKC_HTTPS_PROXY}"
-          - name: NO_PROXY
+          - name: TKC_NO_PROXY
             value: "${TKC_NO_PROXY}"
           - name: ALL_NAMESPACES
             value: "${ALL_NAMESPACES}"
