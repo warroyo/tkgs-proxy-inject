@@ -5,27 +5,20 @@ logerr() { echo "$(date) ERROR: $@" 1>&2; }
 # Logging function that will redirect to stdout with timestamp
 loginfo() { echo "$(date) INFO: $@" ;}
 
-if [[ -z "$TKC_HTTP_PROXY" || -z "$TKC_HTTPS_PROXY" || -z "$TKC_NO_PROXY" || -z "$ALL_NAMESPACES" ]]
+if [[ -z "$TKC_HTTP_PROXY" || -z "$TKC_HTTPS_PROXY" || -z "$TKC_NO_PROXY" ]]
   then
     logerr "missing environment vars"
     exit 2
 fi
 
-all=""
-if [  $ALL_NAMESPACES = "true" ]
-  then
-    all="-A"
-fi
-
 run_interval=${INTERVAL:=30}
-
 
 
 function run()
 {
 
   #get the machines
-  machines=$(kubectl get virtualmachines ${all} -o json)
+  machines=$(kubectl get virtualmachines -o json)
 
   for row in $(echo "${machines}" | jq -r '.items[] | @base64'); do
       _jq() {
@@ -50,11 +43,12 @@ function run()
 
 
       ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i /tmp/sshkey.pem vmware-system-user@${ip} << EOF
-      
+      sudo -i
+      whoami
       if [ ! -f /etc/systemd/system/containerd.service.d/http-proxy.conf ]; then
           echo "no proxy set, configuring"
 
-          sudo -i
+          mkdir -p /etc/systemd/system/containerd.service.d
           echo '[Service]' > /etc/systemd/system/containerd.service.d/http-proxy.conf
           echo 'Environment="HTTP_PROXY='${TKC_HTTP_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf
           echo 'Environment="HTTPS_PROXY='${TKC_HTTPS_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf

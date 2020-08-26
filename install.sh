@@ -61,7 +61,7 @@ fi
 
 echo "creating k8s deployment in namespace ${DEPLOY_NS}"
 sshpass -p "${sv_pass}" ssh -t -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  root@"${sv_ip}"  << EOF
-kubectl apply -n ${DEPLOY_NS} -f manifest.yml
+kubectl apply -f manifest.yml
 EOF
 if [ $? -eq 0 ] ;
 then      

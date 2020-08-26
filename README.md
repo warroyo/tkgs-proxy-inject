@@ -1,6 +1,6 @@
 # TKGs Proxy Injector
 
-This can be used to add a proxy to guest clusters automatically. This will run as a native pod in the supervsior cluster and continously ssh out to the guest cluster nodes and make sure they have a proxy configured.
+This can be used to add a proxy to guest clusters automatically. This will run as a native pod in the supervsior cluster and continously ssh out to the guest cluster nodes and make sure they have a proxy configured. This will run on a per namespace basis due to some limitiations with the default firewall rules applied between namespaces with NSX-T.
 
 
 ## Usage
@@ -21,7 +21,6 @@ all vars are set in `env.sh`
 `TKC_HTTPS_PROXY` - valid http proxy that you want to use
 `TKC_HTTP_PROXY` - valid https proxy that you want to use
 `TKC_NO_PROXY` -  no proxy list
-`ALL_NAMESPACES` - whether or not to watch all clusters across all namespaces, if false will only watch deployed namespace
 `INTERVAL` - interval to run the script
 
 **NOTE: NOT TESTED FOR PRODUCTION USE**

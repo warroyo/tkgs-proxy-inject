@@ -21,13 +21,13 @@ rules:
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
   name: proxy-kubectl
+  namespace: ${DEPLOY_NS}
 subjects:
   - kind: ServiceAccount
     name: internal-kubectl
-    namespace: ${DEPLOY_NS}
 roleRef:
   kind: ClusterRole
   name: proxy-inject
@@ -38,6 +38,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: proxy-inject
+  namespace: ${DEPLOY_NS}
   labels:
     app: proxy-inject
 spec:
