@@ -50,25 +50,25 @@ function run()
 
 
       ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i /tmp/sshkey.pem vmware-system-user@${ip} << EOF
-      whoami
-      # if [ ! -f /etc/systemd/system/containerd.service.d/http-proxy.conf ]; then
-      #     echo "no proxy set, configuring"
+      
+      if [ ! -f /etc/systemd/system/containerd.service.d/http-proxy.conf ]; then
+          echo "no proxy set, configuring"
 
-      #     sudo -i
-      #     echo '[Service]' > /etc/systemd/system/containerd.service.d/http-proxy.conf
-      #     echo 'Environment="HTTP_PROXY='${TKC_HTTP_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf
-      #     echo 'Environment="HTTPS_PROXY='${TKC_HTTPS_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf
-      #     echo 'Environment="NO_PROXY='${TKC_NO_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf
-      #     echo 'PROXY_ENABLED="yes"' > /etc/sysconfig/proxy
-      #     echo 'HTTP_PROXY="'${TKC_HTTP_PROXY}'"' >> /etc/sysconfig/proxy
-      #     echo 'HTTPS_PROXY="'${TKC_HTTPS_PROXY}'"' >> /etc/sysconfig/proxy
-      #     echo 'NO_PROXY="'${TKC_NO_PROXY}'"' >> /etc/sysconfig/proxy
+          sudo -i
+          echo '[Service]' > /etc/systemd/system/containerd.service.d/http-proxy.conf
+          echo 'Environment="HTTP_PROXY='${TKC_HTTP_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf
+          echo 'Environment="HTTPS_PROXY='${TKC_HTTPS_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf
+          echo 'Environment="NO_PROXY='${TKC_NO_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf
+          echo 'PROXY_ENABLED="yes"' > /etc/sysconfig/proxy
+          echo 'HTTP_PROXY="'${TKC_HTTP_PROXY}'"' >> /etc/sysconfig/proxy
+          echo 'HTTPS_PROXY="'${TKC_HTTPS_PROXY}'"' >> /etc/sysconfig/proxy
+          echo 'NO_PROXY="'${TKC_NO_PROXY}'"' >> /etc/sysconfig/proxy
 
-      #     systemctl restart containerd
+          systemctl restart containerd
 
-      # else
-      #     echo "proxy already set"
-      # fi
+      else
+          echo "proxy already set"
+      fi
 
 EOF
 
