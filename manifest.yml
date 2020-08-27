@@ -54,6 +54,7 @@ spec:
       serviceAccountName: internal-kubectl
       containers:
       - image: docker-registry.kube-system.svc:5000/vmware/proxy-inject:1.0.0
+        imagePullPolicy: Always
         name: proxy-inject
         env:
           - name: TKC_HTTP_PROXY
