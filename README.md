@@ -16,11 +16,11 @@ This can be used to add a proxy to guest clusters automatically. This will run a
 
 all vars are set in `env.sh`
 
-`SV_IPS` -  comma separated list of supervsior management IPs
-`DEPLOY_NS` - namespace that the proxy pod will be deployed into
-`TKC_HTTPS_PROXY` - valid http proxy that you want to use
-`TKC_HTTP_PROXY` - valid https proxy that you want to use
-`TKC_NO_PROXY` -  no proxy list
-`INTERVAL` - interval to run the script
+* `SV_IPS` -  comma separated list of supervsior management IPs
+* `DEPLOY_NS` - namespace that the proxy pod will be deployed into
+* `TKC_HTTPS_PROXY` - valid http proxy that you want to use
+* `TKC_HTTP_PROXY` - valid https proxy that you want to use
+* `TKC_NO_PROXY` -  no proxy list
+* `INTERVAL` - interval to run the script
 
 **NOTE: NOT TESTED FOR PRODUCTION USE**
