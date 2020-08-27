@@ -38,10 +38,11 @@ function run()
       loginfo "ip: ${ip}"
 
       #get the secret for the machine and create a file
+      loginfo "getting ssh key for ${cluster}"
       kubectl get secret ${cluster}-ssh -n ${ns} -o jsonpath="{.data.ssh-privatekey}" | base64 -d > /tmp/sshkey.pem
       chmod 400 /tmp/sshkey.pem
 
-
+      loginfo "attempting ssh to ${ip}"
       ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i /tmp/sshkey.pem vmware-system-user@${ip} << EOF
       sudo -i
       whoami
@@ -58,6 +59,7 @@ function run()
           echo 'HTTPS_PROXY="'${TKC_HTTPS_PROXY}'"' >> /etc/sysconfig/proxy
           echo 'NO_PROXY="'${TKC_NO_PROXY}'"' >> /etc/sysconfig/proxy
 
+          systemctl daemon-reload
           systemctl restart containerd
 
       else
