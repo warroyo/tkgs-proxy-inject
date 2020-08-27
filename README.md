@@ -1,6 +1,6 @@
 # TKGs Proxy Injector
 
-This can be used to add a proxy to guest clusters automatically. This will run as a native pod in the supervsior cluster and continously ssh out to the guest cluster nodes and make sure they have a proxy configured. This will run on a per namespace basis due to some limitiations with the default firewall rules applied between namespaces with NSX-T.
+This can be used to add a proxy to guest clusters automatically. This will run as a native pod in the supervsior cluster and continously ssh out to the guest cluster nodes and make sure they have a proxy configured. This will run on a per namespace basis due to some limitiations with the default firewall rules applied between namespaces with NSX-T. This also leverages the `docker-registry` running in the supervisor cluster to store the `proxy-inject` docker image to reduce external dependencies on internal regsitries existing.
 
 
 ## Usage
