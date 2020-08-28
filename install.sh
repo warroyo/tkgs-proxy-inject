@@ -48,7 +48,7 @@ echo "injecting environment vars into manifest file"
 envsubst < manifest.yml > newman.yml
 
 echo "copying manifest file to supervisor node ${sv_ip}"
-sshpass -p "${sv_pass}" scp -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./newman.yml root@"${ip}":./manifest.yml >> /dev/null
+sshpass -p "${sv_pass}" scp -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./newman.yml root@"${sv_ip}":./manifest.yml >> /dev/null
 if [ $? -eq 0 ] ;
 then      
       echo "manifest copied sucessfully"
