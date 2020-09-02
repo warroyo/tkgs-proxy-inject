@@ -23,4 +23,18 @@ all vars are set in `env.sh`
 * `TKC_NO_PROXY` -  no proxy list
 * `INTERVAL` - interval to run the script
 
+
+## Authenticated proxies
+
+if your proxy uses auth you can add the username and pass inline in the env var.
+ex.
+
+`TKC_HTTPS_PROXY='http://someuser:somepassword@proxy.com'`
+
+if your proxy password has a `$` be sure to escape it. you will need to use `\\` since it needs to be escaped for the k8s manifest as well as for the environment.
+
+ex.
+ 
+`pa\\$sword`
+
 **NOTE: NOT TESTED FOR PRODUCTION USE**

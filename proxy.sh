@@ -45,25 +45,48 @@ function run()
       loginfo "attempting ssh to ${ip}"
       ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i /tmp/sshkey.pem vmware-system-user@${ip} << EOF
       sudo -i
-      whoami
-      if [ ! -f /etc/systemd/system/containerd.service.d/http-proxy.conf ]; then
-          echo "no proxy set, configuring"
+      mkdir -p /etc/systemd/system/containerd.service.d
+      touch /etc/systemd/system/containerd.service.d/http-proxy.conf
+      touch /etc/sysconfig/proxy
 
-          mkdir -p /etc/systemd/system/containerd.service.d
-          echo '[Service]' > /etc/systemd/system/containerd.service.d/http-proxy.conf
-          echo 'Environment="HTTP_PROXY='${TKC_HTTP_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf
-          echo 'Environment="HTTPS_PROXY='${TKC_HTTPS_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf
-          echo 'Environment="NO_PROXY='${TKC_NO_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf
-          echo 'PROXY_ENABLED="yes"' > /etc/sysconfig/proxy
-          echo 'HTTP_PROXY="'${TKC_HTTP_PROXY}'"' >> /etc/sysconfig/proxy
-          echo 'HTTPS_PROXY="'${TKC_HTTPS_PROXY}'"' >> /etc/sysconfig/proxy
-          echo 'NO_PROXY="'${TKC_NO_PROXY}'"' >> /etc/sysconfig/proxy
 
+      ctd_new_file="/etc/systemd/system/containerd.service.d/http-proxy.conf.new"
+      ctd_file="/etc/systemd/system/containerd.service.d/http-proxy.conf"
+
+      echo "creating temp containerd proxy file"
+
+      echo '[Service]' > $ctd_new_file
+      echo 'Environment="HTTP_PROXY='${TKC_HTTP_PROXY}'"' >> $ctd_new_file
+      echo 'Environment="HTTPS_PROXY='${TKC_HTTPS_PROXY}'"' >> $ctd_new_file
+      echo 'Environment="NO_PROXY='${TKC_NO_PROXY}'"' >> $ctd_new_file
+
+      echo "comparing containerd proxy settings"
+      if cmp -s "$ctd_new_file" "$ctd_file"; then
+          echo "the containerd proxy is already set and unchanged"
+      else
+          echo "containerd proxy changed updating..."
+          mv $ctd_new_file $ctd_file
           systemctl daemon-reload
           systemctl restart containerd
+      fi
 
+
+      sys_file="/etc/sysconfig/proxy"
+      sys_new_file="/etc/sysconfig/proxy.new"
+
+      echo "creating temp system proxy file"
+
+      echo 'PROXY_ENABLED="yes"' > $sys_new_file
+      echo 'HTTP_PROXY='"'${TKC_HTTP_PROXY}'" >> $sys_new_file
+      echo 'HTTPS_PROXY='"'${TKC_HTTPS_PROXY}'" >> $sys_new_file
+      echo 'NO_PROXY='"'${TKC_NO_PROXY}'" >> $sys_new_file
+
+      echo "comparing system proxy settings"
+      if cmp -s "$sys_file" "$sys_new_file"; then
+          echo "the system proxy is already set and unchanged"
       else
-          echo "proxy already set"
+          echo "system proxy changed updating..."
+          mv $sys_new_file $sys_file
       fi
 
 EOF
