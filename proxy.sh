@@ -50,9 +50,6 @@ function run()
       touch /etc/sysconfig/proxy
 
 
-      ctd_new_file="/etc/systemd/system/containerd.service.d/http-proxy.conf.new"
-      ctd_file="/etc/systemd/system/containerd.service.d/http-proxy.conf"
-
       echo "creating temp containerd proxy file"
 
       echo '[Service]' > /etc/systemd/system/containerd.service.d/http-proxy.conf.new
@@ -61,7 +58,7 @@ function run()
       echo 'Environment="NO_PROXY='${TKC_NO_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf.new
 
       echo "comparing containerd proxy settings"
-      if cmp -s "$ctd_new_file" "$ctd_file"; then
+      if cmp -s "/etc/systemd/system/containerd.service.d/http-proxy.conf.new" "/etc/systemd/system/containerd.service.d/http-proxy.conf"; then
           echo "the containerd proxy is already set and unchanged"
       else
           echo "containerd proxy changed updating..."
@@ -71,9 +68,6 @@ function run()
       fi
 
 
-      sys_file="/etc/sysconfig/proxy"
-      sys_new_file="/etc/sysconfig/proxy.new"
-
       echo "creating temp system proxy file"
 
       echo 'PROXY_ENABLED="yes"' > /etc/sysconfig/proxy.new
@@ -82,7 +76,7 @@ function run()
       echo 'NO_PROXY='"'${TKC_NO_PROXY}'" >> /etc/sysconfig/proxy.new
 
       echo "comparing system proxy settings"
-      if cmp -s "$sys_file" "$sys_new_file"; then
+      if cmp -s "/etc/sysconfig/proxy" "/etc/sysconfig/proxy.new"; then
           echo "the system proxy is already set and unchanged"
       else
           echo "system proxy changed updating..."
