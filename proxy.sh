@@ -55,17 +55,17 @@ function run()
 
       echo "creating temp containerd proxy file"
 
-      echo '[Service]' > $ctd_new_file
-      echo 'Environment="HTTP_PROXY='${TKC_HTTP_PROXY}'"' >> $ctd_new_file
-      echo 'Environment="HTTPS_PROXY='${TKC_HTTPS_PROXY}'"' >> $ctd_new_file
-      echo 'Environment="NO_PROXY='${TKC_NO_PROXY}'"' >> $ctd_new_file
+      echo '[Service]' > /etc/systemd/system/containerd.service.d/http-proxy.conf.new
+      echo 'Environment="HTTP_PROXY='${TKC_HTTP_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf.new
+      echo 'Environment="HTTPS_PROXY='${TKC_HTTPS_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf.new
+      echo 'Environment="NO_PROXY='${TKC_NO_PROXY}'"' >> /etc/systemd/system/containerd.service.d/http-proxy.conf.new
 
       echo "comparing containerd proxy settings"
       if cmp -s "$ctd_new_file" "$ctd_file"; then
           echo "the containerd proxy is already set and unchanged"
       else
           echo "containerd proxy changed updating..."
-          mv $ctd_new_file $ctd_file
+          mv /etc/systemd/system/containerd.service.d/http-proxy.conf.new /etc/systemd/system/containerd.service.d/http-proxy.conf
           systemctl daemon-reload
           systemctl restart containerd
       fi
@@ -76,17 +76,17 @@ function run()
 
       echo "creating temp system proxy file"
 
-      echo 'PROXY_ENABLED="yes"' > $sys_new_file
-      echo 'HTTP_PROXY='"'${TKC_HTTP_PROXY}'" >> $sys_new_file
-      echo 'HTTPS_PROXY='"'${TKC_HTTPS_PROXY}'" >> $sys_new_file
-      echo 'NO_PROXY='"'${TKC_NO_PROXY}'" >> $sys_new_file
+      echo 'PROXY_ENABLED="yes"' > /etc/sysconfig/proxy.new
+      echo 'HTTP_PROXY='"'${TKC_HTTP_PROXY}'" >> /etc/sysconfig/proxy.new
+      echo 'HTTPS_PROXY='"'${TKC_HTTPS_PROXY}'" >> /etc/sysconfig/proxy.new
+      echo 'NO_PROXY='"'${TKC_NO_PROXY}'" >> /etc/sysconfig/proxy.new
 
       echo "comparing system proxy settings"
       if cmp -s "$sys_file" "$sys_new_file"; then
           echo "the system proxy is already set and unchanged"
       else
           echo "system proxy changed updating..."
-          mv $sys_new_file $sys_file
+          mv /etc/sysconfig/proxy.new /etc/sysconfig/proxy
       fi
 
 EOF
