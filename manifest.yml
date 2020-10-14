@@ -63,6 +63,8 @@ spec:
             value: "${TKC_HTTPS_PROXY}"
           - name: TKC_NO_PROXY
             value: "${TKC_NO_PROXY}"
+          - name: REG_CERT
+            value: "${REG_CERT}"
         resources:
           requests:
             memory: "64Mi"
