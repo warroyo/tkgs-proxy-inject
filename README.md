@@ -1,6 +1,6 @@
 # TKGs Proxy Injector
 
-This can be used to add a proxy to guest clusters automatically. This will run as a native pod in the supervsior cluster and continously ssh out to the guest cluster nodes and make sure they have a proxy configured. This will run on a per namespace basis due to some limitiations with the default firewall rules applied between namespaces with NSX-T. This also leverages the `docker-registry` running in the supervisor cluster to store the `proxy-inject` docker image to reduce external dependencies on internal regsitries existing.
+This can be used to add a proxy and/or a ca cert to guest clusters automatically. This will run as a native pod in the supervsior cluster and continously ssh out to the guest cluster nodes and make sure they have a proxy configured. This will run on a per namespace basis due to some limitiations with the default firewall rules applied between namespaces with NSX-T. This also leverages the `docker-registry` running in the supervisor cluster to store the `proxy-inject` docker image to reduce external dependencies on internal regsitries existing.
 
 
 ## Usage
@@ -21,6 +21,7 @@ all vars are set in `env.sh`
 * `TKC_HTTPS_PROXY` - valid http proxy that you want to use
 * `TKC_HTTP_PROXY` - valid https proxy that you want to use
 * `TKC_NO_PROXY` -  no proxy list
+* `REG_CERT` -  the registry ca cert to trust an untrusted registry
 * `INTERVAL` - interval to run the script
 
 
