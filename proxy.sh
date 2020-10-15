@@ -13,7 +13,6 @@ run_interval=${INTERVAL:=30}
 function inject_ca()
 {
   touch /etc/ssl/certs/regcert.pem
-  echo "$REG_CERT" > /etc/ssl/certs/regcert.pem.new
   echo "checking if cert exists"
   if cmp -s "/etc/ssl/certs/regcert.pem.new" "/etc/ssl/certs/regcert.pem"; then
       echo "the cert already exists and has not changed"
@@ -110,6 +109,7 @@ function run()
         echo no CA cert providied skipping cert injection...
       else
        $(typeset -f inject_ca)
+       echo "${REG_CERT}" | base64 -d > /etc/ssl/certs/regcert.pem.new
        inject_ca
       fi
 

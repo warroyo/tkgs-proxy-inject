@@ -3,6 +3,7 @@ set -e
 
 source env.sh
 
+export REG_CERT=$(echo "$REG_CERT" | base64 -w 0)
 
 #get all supervisor ips, there may be a better way?
 echo "getting supervisor vm creds"
