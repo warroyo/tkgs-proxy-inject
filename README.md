@@ -1,6 +1,6 @@
 # TKGs Proxy Injector
 
-This can be used to add a proxy and/or a ca cert to guest clusters automatically. This will run as a native pod in the supervsior cluster and continously ssh out to the guest cluster nodes and make sure they have a proxy configured. This will run on a per namespace basis due to some limitiations with the default firewall rules applied between namespaces with NSX-T. This also leverages the `docker-registry` running in the supervisor cluster to store the `proxy-inject` docker image to reduce external dependencies on internal regsitries existing.
+This can be used to add a proxy and/or a CA cert to guest clusters automatically. This will run as a native pod in the supervsior cluster and continously ssh out to the guest cluster nodes and make sure they have the proxy and cert configured. This will run on a per namespace basis due to some limitiations with the default firewall rules applied between namespaces with NSX-T. This also leverages the `docker-registry` running in the supervisor cluster to store the `proxy-inject` docker image to reduce external dependencies on internal regsitries existing.
 
 
 ## Usage
@@ -9,6 +9,8 @@ This can be used to add a proxy and/or a ca cert to guest clusters automatically
 2. copy this repo over to your vcenter 
 3. grab the `proxy-inject.tar.gz` from the releases and upload it to your vcenter VM. you can do this scp or if you have internet connection out from vcenter just pull it down to the vm. copy it into the newly created repo directory
 4. open `env.sh` and fill in the variables
+   1. if you do not want to have a proxy installed and just want to add a cert you can remove the proxy specific vars and it will skip the proxy.
+   2. if you do not want a cert to be added you can leave out the `REG_CERT` variable and it will be skipped.
 5. execute `install.sh`
 
 
