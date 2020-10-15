@@ -13,6 +13,15 @@ This can be used to add a proxy and/or a CA cert to guest clusters automatically
    2. if you do not want a cert to be added you can leave out the `REG_CERT` variable and it will be skipped.
 5. execute `install.sh`
 
+## Upgrading
+
+1. ssh to vcenter and hop into shell
+2. copy your `env.sh` out of the root repo folder
+3. pull down the latest release of the code base to replace the existing one
+4. pull down the latest release of `proxy-inject.tar.gz` to replace the existing one
+5. copy your `env.sh` back into the root of the repo replacing the default one
+6. update any new env vars
+7. execute `install.sh`
 
 ## Vars
 
