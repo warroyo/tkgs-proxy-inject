@@ -28,8 +28,8 @@ fi
 echo "importing image into local registry"
 sshpass -p "${sv_pass}" ssh -t -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  root@"${ip}"  << EOF
 docker load -i proxy-inject.tar.gz
-docker tag proxy-inject:1.0.1 localhost:5002/vmware/proxy-inject:1.0.1
-docker push localhost:5002/vmware/proxy-inject:1.0.1
+docker tag proxy-inject:1.1.0 localhost:5002/vmware/proxy-inject:1.1.0
+docker push localhost:5002/vmware/proxy-inject:1.1.0
 EOF
 if [ $? -eq 0 ] ;
 then      
