@@ -13,7 +13,7 @@ run_interval=${INTERVAL:=30}
 function inject_ca()
 {
   touch /etc/ssl/certs/regcert.pem
-  echo "$TRUSTED_CERT" > /etc/ssl/certs/regcert.pem.new
+  echo "$REG_CERT" > /etc/ssl/certs/regcert.pem.new
   echo "checking if cert exists"
   if cmp -s "/etc/ssl/certs/regcert.pem.new" "/etc/ssl/certs/regcert.pem"; then
       echo "the cert already exists and has not changed"
