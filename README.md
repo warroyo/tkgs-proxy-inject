@@ -27,7 +27,7 @@ This can be used to add a proxy and/or a CA cert to guest clusters automatically
 
 all vars are set in `env.sh`
 
-* `SV_IPS` -  comma separated list of supervsior management IPs
+* `VSPHERE_CLUSTER` -  the vsphere cluster name that wcp is enabled on
 * `DEPLOY_NS` - namespace that the proxy pod will be deployed into
 * `TKC_HTTPS_PROXY` - valid http proxy that you want to use
 * `TKC_HTTP_PROXY` - valid https proxy that you want to use
