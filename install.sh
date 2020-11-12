@@ -3,19 +3,36 @@ set -e
 
 source env.sh
 
+nextip(){
+    IP=$1
+    IP_HEX=$(printf '%.2X%.2X%.2X%.2X\n' `echo $IP | sed -e 's/\./ /g'`)
+    NEXT_IP_HEX=$(printf %.8X `echo $(( 0x$IP_HEX + 1 ))`)
+    NEXT_IP=$(printf '%d.%d.%d.%d\n' `echo $NEXT_IP_HEX | sed -r 's/(..)/0x\1 /g'`)
+    echo "$NEXT_IP"
+}
+
+
 export REG_CERT=$(echo "$REG_CERT" | base64 -w 0)
 
+#get the cluster id
+CLUSTER=$(dcli com vmware vcenter cluster list --names ${VSPHERE_CLUSTER} +formatter yaml | sed -n -e 's/^.*cluster: //p')
+NETWORK=$(dcli com vmware vcenter namespacemanagement clusters get --cluster ${CLUSTER} | sed -n -e 's/^.*network_provider: //p' | tail -n1)
 #get all supervisor ips, there may be a better way?
 echo "getting supervisor vm creds"
 
 /usr/lib/vmware-wcp/decryptK8Pwd.py > ./sv-info
 
-sv_ip=$(cat ./sv-info | sed -n -e 's/^.*IP: //p')
-sv_pass=$(cat ./sv-info| sed -n -e 's/^.*PWD: //p')
+cat ./sv-info | grep ${CLUSTER} -A2 > ./${CLUSTER}-info
+
+sv_ip=$(cat ./${CLUSTER}-info | sed -n -e 's/^.*IP: //p')
+sv_pass=$(cat ./${CLUSTER}-info| sed -n -e 's/^.*PWD: //p')
 
 #loop over each sv and upload the image tar
 set +e
-for ip in ${SV_IPS//,/ }
+
+NUM=5
+ip=${sv_ip}
+for i in $(seq 1 $NUM);
 do
 echo "copying image tar to ${ip}"
 sshpass -p "${sv_pass}" scp -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./proxy-inject.tar.gz root@"${ip}":./proxy-inject.tar.gz >> /dev/null
@@ -43,10 +60,18 @@ echo "cleanup image tar"
 sshpass -p "${sv_pass}" ssh -t -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  root@"${ip}"  << EOF
 rm ./proxy-inject.tar.gz
 EOF
+ip=$(nextip $ip)
 done
 
+manifest=./manifest-nsxt.yml
+if [ "${NETWORK}" = "VSPHERE_NETWORK" ];
+then
+echo "using VDS networking"
+manifest=./manifest-vds.yml
+fi
+
 echo "injecting environment vars into manifest file"
-envsubst < manifest.yml > newman.yml
+envsubst < ${manifest} > newman.yml
 
 echo "copying manifest file to supervisor node ${sv_ip}"
 sshpass -p "${sv_pass}" scp -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./newman.yml root@"${sv_ip}":./manifest.yml >> /dev/null
