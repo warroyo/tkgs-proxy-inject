@@ -56,7 +56,7 @@ function run()
       #get the secret for the machine and create a file
       loginfo "getting ssh key for ${cluster}"
       kubectl get secret ${cluster}-ssh -n ${ns} -o jsonpath="{.data.ssh-privatekey}" | base64 -d > /tmp/sshkey.pem
-      chmod 400 /tmp/sshkey.pem
+      chmod 600 /tmp/sshkey.pem
 
       loginfo "attempting ssh to ${ip}"
       ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i /tmp/sshkey.pem vmware-system-user@${ip} << EOF
