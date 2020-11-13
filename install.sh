@@ -32,8 +32,16 @@ set +e
 
 NUM=5
 ip=${sv_ip}
+success=0
 for i in $(seq 1 $NUM);
 do
+echo "checking if ip is in use"
+if nc -z $ip 22 2>/dev/null; then
+    echo "$ip is up"
+else
+    echo "$ip is not in use skipping"
+    continue
+fi
 echo "copying image tar to ${ip}"
 sshpass -p "${sv_pass}" scp -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./proxy-inject.tar.gz root@"${ip}":./proxy-inject.tar.gz >> /dev/null
 if [ $? -eq 0 ] ;
@@ -61,13 +69,20 @@ sshpass -p "${sv_pass}" ssh -t -q -o StrictHostKeyChecking=no -o UserKnownHostsF
 rm ./proxy-inject.tar.gz
 EOF
 ip=$(nextip $ip)
+success=$((success+1))
 done
+
+if [ $success -lt 4 ];
+then
+      echo "unable to upload image to all SV VMs please check their connectivity"
+      exit 2
+fi
 
 manifest=./manifest-nsxt.yml
 if [ "${NETWORK}" = "VSPHERE_NETWORK" ];
 then
-echo "using VDS networking"
-manifest=./manifest-vds.yml
+      echo "using VDS networking"
+      manifest=./manifest-vds.yml
 fi
 
 echo "injecting environment vars into manifest file"

@@ -1,3 +1,28 @@
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: proxy-inject
+spec:
+  fsGroup:
+    rule: MustRunAs
+    ranges:
+      - min: 1
+        max: 65535
+  privileged: false
+  runAsUser:
+    rule: MustRunAsNonRoot
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: MustRunAs
+    ranges:
+      - min: 1
+        max: 65535
+  hostNetwork: true
+  volumes:
+  - '*'
+---
+
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -18,6 +43,11 @@ rules:
     verbs:
       - get
       - list
+  - apiGroups: ['policy']
+    resources: ['podsecuritypolicies']
+    verbs:     ['use']
+    resourceNames:
+      - proxy-inject
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -52,8 +82,12 @@ spec:
         app: proxy-inject
     spec:
       serviceAccountName: internal-kubectl
+      securityContext:
+        runAsUser: 100
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
-      - image: docker-registry.kube-system.svc:5000/vmware/proxy-inject:1.2.0
+      - image: localhost:5000/vmware/proxy-inject:1.2.0
         imagePullPolicy: Always
         name: proxy-inject
         env:
@@ -72,23 +106,29 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "500m"
-        dnsPolicy: ClusterFirst
-        hostNetwork: true
-        nodeSelector:
-          node-role.kubernetes.io/master: ""
-        tolerations:
-          - effect: NoSchedule
-            key: node-role.kubernetes.io/master
-            operator: Exists
-          - key: CriticalAddonsOnly
-            operator: Exists
-          - effect: NoExecute
-            key: node.alpha.kubernetes.io/notReady
-            operator: Exists
-          - effect: NoExecute
-            key: node.alpha.kubernetes.io/unreachable
-            operator: Exists
-          - effect: NoSchedule
-            key: kubeadmNode
-            operator: Equal
-            value: master
+        volumeMounts:
+          - mountPath: /tmp
+            name: tmp
+      volumes:
+      - emptyDir: {}
+        name: tmp
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+          operator: Exists
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoExecute
+          key: node.alpha.kubernetes.io/notReady
+          operator: Exists
+        - effect: NoExecute
+          key: node.alpha.kubernetes.io/unreachable
+          operator: Exists
+        - effect: NoSchedule
+          key: kubeadmNode
+          operator: Equal
+          value: master
