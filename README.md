@@ -6,7 +6,7 @@ This can be used to add a proxy and/or a CA cert to guest clusters automatically
 ## Usage
 
 1. ssh to vcenter and hop into shell
-2. *** be sure to do a DCLI login otherwise the script will hang waiting for a password ***
+2. **be sure to do a DCLI login otherwise the script will hang waiting for a password**
 3. copy this repo over to your vcenter 
 4. grab the `proxy-inject.tar.gz` from the releases and upload it to your vcenter VM. you can do this scp or if you have internet connection out from vcenter just pull it down to the vm. copy it into the newly created repo directory
 5. open `env.sh` and fill in the variables
