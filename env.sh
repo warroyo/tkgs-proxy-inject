@@ -1,4 +1,4 @@
-export VSPHERE_CLUSTER=domain-c7
+export VSPHERE_CLUSTER="Cluster" #this is not the id this is the name you see in vcenter
 export DEPLOY_NS="test-ns2"
 export TKC_HTTPS_PROXY="http://someproxy:8080"
 export TKC_HTTP_PROXY="http://someproxy:8080"
