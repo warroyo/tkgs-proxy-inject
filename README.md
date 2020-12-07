@@ -2,6 +2,8 @@
 
 This can be used to add a proxy and/or a CA cert to guest clusters automatically. This will run as a native pod in the supervsior cluster and continously ssh out to the guest cluster nodes and make sure they have the proxy and cert configured.When using this with VDS networking the pod will run on the control plane since natiev pods are unavailable. This will run on a per namespace basis due to some limitiations with the default firewall rules applied between namespaces with NSX-T. This also leverages the `docker-registry` running in the supervisor cluster to store the `proxy-inject` docker image to reduce external dependencies on internal regsitries existing.
 
+**NOTE: when upgrading the Supervisor Cluster it will role the nodes so the image for proxy-inject that is stored on the local registry will be removed. you will need to re-run the install script to re-upload the image otherwise you will get image pull errors**
+
 
 ## Usage
 
