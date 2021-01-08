@@ -56,7 +56,7 @@ sshpass -p "${sv_pass}" ssh -t -q -o StrictHostKeyChecking=no -o UserKnownHostsF
 source /etc/profile 
 gunzip -f proxy-inject.tar.gz
 ctr image import proxy-inject.tar
-ctr image tag proxy-inject:1.3.0 localhost:5002/vmware/proxy-inject:1.3.0
+ctr image tag --force proxy-inject:1.3.0 localhost:5002/vmware/proxy-inject:1.3.0
 ctr image push localhost:5002/vmware/proxy-inject:1.3.0
 EOF
 if [ $? -eq 0 ] ;
