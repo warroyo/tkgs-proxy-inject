@@ -5,6 +5,11 @@ This can be used to add a proxy and/or a CA cert to guest clusters automatically
 **NOTE: when upgrading the Supervisor Cluster it will role the nodes so the image for proxy-inject that is stored on the local registry will be removed. you will need to re-run the install script to re-upload the image otherwise you will get image pull errors**
 
 
+## Compatibility
+
+if you are running a supervisor cluster that is `v1.18.2-vsc0.0.6-17224208` or higher please use `1.3.0` and up. if you are only an older version use `1.2.0`
+
+
 ## Usage
 
 1. ssh to vcenter and hop into shell

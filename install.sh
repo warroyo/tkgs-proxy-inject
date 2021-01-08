@@ -53,9 +53,11 @@ else
 fi
 echo "importing image into local registry"
 sshpass -p "${sv_pass}" ssh -t -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  root@"${ip}"  << EOF
-docker load -i proxy-inject.tar.gz
-docker tag proxy-inject:1.2.0 localhost:5002/vmware/proxy-inject:1.2.0
-docker push localhost:5002/vmware/proxy-inject:1.2.0
+source /etc/profile 
+gunzip -f proxy-inject.tar.gz
+ctr image import proxy-inject.tar
+ctr image tag proxy-inject:1.3.0 localhost:5002/vmware/proxy-inject:1.3.0
+ctr image push localhost:5002/vmware/proxy-inject:1.3.0
 EOF
 if [ $? -eq 0 ] ;
 then      
@@ -67,6 +69,7 @@ fi
 echo "cleanup image tar"
 sshpass -p "${sv_pass}" ssh -t -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  root@"${ip}"  << EOF
 rm ./proxy-inject.tar.gz
+rm ./proxy-inject.tar
 EOF
 ip=$(nextip $ip)
 success=$((success+1))
